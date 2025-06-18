@@ -1,8 +1,8 @@
 import requests
-
+import config
 
 def informacao_temperatura_tempo(cidade):
-    api_key = "0545db5bbf97d924eda6b028ede79f6d"
+    api_key = config.api_key
     link = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={api_key}&lang=pt_BR"
 
     requisicao = requests.get(link)

@@ -1,4 +1,3 @@
-import ApiTemperatura
 from ApiTemperatura import informacao_temperatura_tempo
 import  tkinter as tk
 
