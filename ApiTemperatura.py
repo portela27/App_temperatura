@@ -1,37 +1,26 @@
 import requests
 import config
-import tkinter as tk
-from tkinter import messagebox
+from datetime import datetime
 
-def informacao_temperatura_tempo(cidade):
+
+#buscando informaçoes na API openweathermap
+def informacao_temperatura_tempo(cidade, resultado_label):
     api_key = config.api_key
     link = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={api_key}&lang=pt_BR"
 
     requisicao = requests.get(link)
     requisicao_dic = requisicao.json()
-
+    timestamp = requisicao_dic['dt']
+    offset = requisicao_dic['timezone']
+    # verificação basica para retorno do resultado
     if requisicao.status_code == 200:
         descricao = requisicao_dic['weather'][0]['description']
         temperatura = requisicao_dic['main']['temp'] - 273.15
-        resultado_label.config(text=f"{descricao.capitalize()},{temperatura:.2f}ºC")
+        temperatura_max = requisicao_dic['main']['temp_max'] - 273.15
+        hora_cidade = datetime.fromtimestamp(timestamp + offset).strftime('%H:%M:%S')
+        resultado_label.config(text=f"Na cidade de {cidade}\n, {descricao.capitalize()}\n, {temperatura:.2f}°C e máxima de {temperatura_max:.2f}°C\n horario local de {hora_cidade}")
     else:
         print(f"Não foi possivel entrar a cidade: {cidade}. Erro{requisicao_dic.get('message', 'Desconhecido')}")
 
 
-
-# interface em tkinter
-root = tk.Tk()
-
-root.title("consulta de temperatura ")
-tk.Label(root, text="Digite a Cidade: ").pack
-
-cidade_entry = tk.Entry(root)
-cidade_entry.pack()
-
-tk.Button(root, text="Consultar", command=lambda: informacao_temperatura_tempo(cidade_entry.get())).pack()
-
-resultado_label = tk.Label(root, text="", font=('Helvetica',12))
-resultado_label.pack()
-
-root.mainloop()
 
